@@ -405,3 +405,96 @@ def forward_idea(idea_id:str):
         return {
             "error":str(e)
         }
+
+# =========================
+# GET ADMIN IDEAS
+# =========================
+@app.get("/adminIdeas")
+def get_admin_ideas():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+        SELECT * FROM ideas1
+        WHERE status IN ("Forwarded", "Accepted", "Rejected")
+        ORDER BY id desc
+        """
+
+        cursor.execute(query)
+        ideas = cursor.fetchall() #Gets matching status are stores it here
+        cursor.close()
+        db.close()
+        return ideas
+    
+    except Exception as e:
+        print("ERROR /adminIdeas:",e)
+        return []
+
+# =========================
+# APPROVE IDEA
+# =========================
+@app.put("/approveIdea/{idea_id}")
+def approve_idea(idea_id:str):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        query = """
+        UPDATE ideas1
+        SET status=%s
+        WHERE idea_id=%s
+        """
+
+        cursor.execute(query , ("Accepted" , idea_id))
+        db.commit()
+        cursor.close()
+        db.close()
+
+        return{
+            "message" : "Idea Approved"
+        }
+    
+    except Exception as e:
+        print("ERROR /approveIdea:" , e)
+
+        return {
+            "error" : str(e)
+        }
+    
+# =========================
+# REJECT IDEA
+# =========================
+# =========================
+# REJECT IDEA
+# =========================
+@app.put("/rejectIdea/{idea_id}")
+def reject_idea(idea_id:str):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        query = """
+        UPDATE ideas1
+        SET status=%s
+        WHERE idea_id=%s
+        """
+
+        cursor.execute(query, ("Rejected", idea_id))
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return {
+            "message": "Idea Rejected"
+        }
+
+    except Exception as e:
+        print("ERROR /rejectIdea:", e)
+
+        return {
+            "error": str(e)
+        }
+    

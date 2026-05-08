@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "../components/Button";
+import Logout from "../components/Logout";
 
 function Employee() {
   const [showForm, setShowForm] = useState(false);
@@ -197,12 +198,14 @@ function Employee() {
     <div className="min-h-screen p-8">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-8">
-        <div className="p-2">
+        <div className="flex justify-between items-center p-2">
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight font-serif">
             Employee <span className="text-primary italic">Dashboard</span>
           </h2>
+          
         </div>
 
+        <Logout />
         <Button
           onClick={() => setShowForm(true)}
           className="animation-fade-in animation-delay-200"
