@@ -23,7 +23,7 @@ function Employee() {
     total: 0,
     pending: 0,
     accepted: 0,
-    rejected: 0,
+    forwarded: 0,
   });
 
   const [ideas, setIdeas] = useState([]);
@@ -127,6 +127,17 @@ function Employee() {
   // Handling Update
   const handleUpdate = async () => {
     try {
+      const payload = {
+        classification: selectedIdea.classification,
+        budget: parseFloat(selectedIdea.budget),
+        subject: selectedIdea.subject,
+        details: selectedIdea.details,
+        targetDate: selectedIdea.target_date,
+        empName: selectedIdea.emp_name,
+      };
+
+      console.log(payload);
+
       const res = await fetch(
         `http://127.0.0.1:8000/updateIdea/${selectedIdea.idea_id}`,
         {
@@ -134,49 +145,51 @@ function Employee() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            classification: selectedIdea.classification,
-            budget: selectedIdea.budget,
-            subject: selectedIdea.subject,
-            details: selectedIdea.details,
-            targetDate: String(selectedIdea.target_date).split("T")[0],
-            employeeEmail: selectedIdea.emp_email,
-            empName: selectedIdea.emp_name,
-            currentDate: String(selectedIdea.created_at).split("T")[0],
-          }),
+          body: JSON.stringify(payload),
         },
       );
 
-      // Backend sends response - converts response into JS oject
       const data = await res.json();
+
       console.log(data);
-      // After upating, table is reloaded - sent into the DB
+
       fetchIdeas();
+
       setSelectedIdea(null);
       setEditMode(false);
       setShowDetails(false);
+
       alert("Idea updated successfully");
     } catch (error) {
       console.error(error);
     }
-    console.log(selectedIdea);
   };
 
+  // Handling Forward
   const handleForward = async () => {
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/updateIdea/${selectedIdea.idea_id}`,
+        `http://127.0.0.1:8000/forwardIdea/${selectedIdea.idea_id}`,
         {
           method: "PUT",
         },
       );
+
       const data = await res.json();
+
       console.log(data);
-      await fetchIdeas();
+
+      // reload ideas + stats
+      fetchIdeas();
+      fetchStats();
+
+      // close popup
       setShowDetails(false);
-      alert("Idea forwarded to admin");
+      setSelectedIdea(null);
+
+      alert("Idea forwarded successfully");
     } catch (error) {
-      console.log(error);
+      console.error("Forward error:", error);
     }
   };
 
@@ -186,8 +199,7 @@ function Employee() {
       <div className="flex justify-between items-center mb-8">
         <div className="p-2">
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight font-serif">
-            Employee{" "}
-            <span className="text-primary glow-text italic">Dashboard</span>
+            Employee <span className="text-primary italic">Dashboard</span>
           </h2>
         </div>
 
@@ -363,14 +375,14 @@ function Employee() {
           </p>
         </div>
 
-        {/* REJECTED */}
+        {/* Forwarded */}
         <div className="glass rounded-3xl p-6">
           <h2 className="text-muted-foreground text-sm font-medium">
-            Rejected
+            Forwarded
           </h2>
 
           <p className="text-5xl font-bold mt-5 text-red-400">
-            {stats.rejected}
+            {stats.forwarded}
           </p>
         </div>
       </div>
@@ -435,7 +447,9 @@ function Employee() {
                             ? "bg-green-500/20 text-green-400"
                             : idea.status === "Rejected"
                               ? "bg-red-500/20 text-red-400"
-                              : "bg-yellow-500/20 text-yellow-400"
+                              : idea.status === "Forwarded"
+                                ? "bg-blue-500/20 text-blue-400"
+                                : "bg-yellow-500/20 text-yellow-400"
                         }`}
                       >
                         {idea.status}

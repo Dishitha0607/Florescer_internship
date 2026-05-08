@@ -72,6 +72,14 @@ class Idea(BaseModel):
     empName: str
     currentDate: str
 
+class UpdateIdea(BaseModel):
+    classification: str
+    budget: float
+    subject: str
+    details: str
+    targetDate: str
+    empName: str
+
 # =========================
 # HOME ROUTE
 # =========================
@@ -242,16 +250,16 @@ def dashboard_stats():
 
         accepted = cursor.fetchone()["count"]
 
-        # REJECTED
+        # Forwarded
         cursor.execute(
             """
             SELECT COUNT(*) as count
             FROM ideas1
-            WHERE status='Rejected'
+            WHERE status='Forwarded'
             """
         )
 
-        rejected = cursor.fetchone()["count"]
+        forwarded = cursor.fetchone()["count"]
 
         cursor.close()
         db.close()
@@ -260,7 +268,7 @@ def dashboard_stats():
             "total": total,
             "pending": pending,
             "accepted": accepted,
-            "rejected": rejected
+            "forwarded": forwarded
         }
 
     except Exception as e:
@@ -271,7 +279,7 @@ def dashboard_stats():
             "total": 0,
             "pending": 0,
             "accepted": 0,
-            "rejected": 0
+            "forwarded": 0
         }
 
 # =========================
@@ -321,7 +329,7 @@ def update_status(
 # ===============================
 
 @app.put("/updateIdea/{idea_id}")
-def update_idea(idea_id:str , updated_idea:Idea):
+def update_idea(idea_id: str, updated_idea: UpdateIdea):
     try:
         db = get_db_connection()
         cursor = db.cursor()
@@ -371,7 +379,7 @@ def update_idea(idea_id:str , updated_idea:Idea):
         }
     
 @app.put("/forwardIdea/{idea_id}")
-def forward_idea(idead_id:str):
+def forward_idea(idea_id:str):
     try:
         db = get_db_connection()
         cursor = db.cursor()
@@ -382,7 +390,7 @@ def forward_idea(idead_id:str):
         WHERE idea_id=%s        
         """
 
-        cursor.execute(query , ("Forwarded" , idead_id))
+        cursor.execute(query , ("Forwarded" , idea_id))
 
         db.commit()
         cursor.close()
@@ -393,6 +401,7 @@ def forward_idea(idead_id:str):
         }
     
     except Exception as e:
+        print("ERROR /forwardIdea:",e)
         return {
             "error":str(e)
         }
