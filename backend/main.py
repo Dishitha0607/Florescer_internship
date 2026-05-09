@@ -80,6 +80,14 @@ class UpdateIdea(BaseModel):
     targetDate: str
     empName: str
 
+class ApproveIdea(BaseModel):
+    rating : int
+
+
+class ReviewIdea(BaseModel):
+    rating : int
+    feedback : str
+
 # =========================
 # HOME ROUTE
 # =========================
@@ -250,7 +258,7 @@ def dashboard_stats():
 
         accepted = cursor.fetchone()["count"]
 
-        # Forwarded
+        # FORWARDED
         cursor.execute(
             """
             SELECT COUNT(*) as count
@@ -261,6 +269,17 @@ def dashboard_stats():
 
         forwarded = cursor.fetchone()["count"]
 
+        # Rejected
+        cursor.execute(
+            """
+            SELECT COUNT(*) as count
+            FROM ideas1
+            WHERE status='Rejected'
+            """
+        )
+
+        rejected = cursor.fetchone()["count"]
+
         cursor.close()
         db.close()
 
@@ -268,7 +287,8 @@ def dashboard_stats():
             "total": total,
             "pending": pending,
             "accepted": accepted,
-            "forwarded": forwarded
+            "rejected" : rejected,
+            "forwarded" : forwarded
         }
 
     except Exception as e:
@@ -435,18 +455,18 @@ def get_admin_ideas():
 # APPROVE IDEA
 # =========================
 @app.put("/approveIdea/{idea_id}")
-def approve_idea(idea_id:str):
+def approve_idea(idea_id:str , data:ReviewIdea):
     try:
         db = get_db_connection()
         cursor = db.cursor()
 
         query = """
         UPDATE ideas1
-        SET status=%s
+        SET status=%s,rating=%s,admin_feedback=%s
         WHERE idea_id=%s
         """
 
-        cursor.execute(query , ("Accepted" , idea_id))
+        cursor.execute(query , ("Accepted" , data.rating, data.feedback ,idea_id))
         db.commit()
         cursor.close()
         db.close()
@@ -465,22 +485,19 @@ def approve_idea(idea_id:str):
 # =========================
 # REJECT IDEA
 # =========================
-# =========================
-# REJECT IDEA
-# =========================
 @app.put("/rejectIdea/{idea_id}")
-def reject_idea(idea_id:str):
+def reject_idea(idea_id:str , data:ReviewIdea):
     try:
         db = get_db_connection()
         cursor = db.cursor()
 
         query = """
         UPDATE ideas1
-        SET status=%s
+        SET status=%s, rating=%s, admin_feedback=%s
         WHERE idea_id=%s
         """
 
-        cursor.execute(query, ("Rejected", idea_id))
+        cursor.execute(query, ("Rejected", data.rating, data.feedback ,idea_id))
 
         db.commit()
 

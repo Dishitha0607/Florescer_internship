@@ -16,3 +16,7 @@ created_at timestamp default current_timestamp
 );
 select * from ideas1;
 drop table ideas1;
+
+alter table ideas1 add column rating int null, add column rejection_reason text null;
+alter table ideas1 change rejection_reason admin_feedback text;
+select * from ideas1;

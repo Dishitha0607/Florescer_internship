@@ -7,11 +7,14 @@ function Admin() {
     total: 0,
     pending: 0,
     accepted: 0,
-    forwarded: 0,
+    rejected: 0,
   });
 
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  const [rating, setRating] = useState(5);
+  const [feedback, setFeedback] = useState("");
 
   // =========================
   // FETCH FORWARDED IDEAS
@@ -58,6 +61,13 @@ function Admin() {
         `http://127.0.0.1:8000/approveIdea/${selectedIdea.idea_id}`,
         {
           method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            rating: Number(rating),
+            feedback: feedback,
+          }),
         },
       );
       const data = await res.json();
@@ -68,6 +78,9 @@ function Admin() {
 
       setShowDetails(false);
       setSelectedIdea(null);
+
+      setRating(5);
+      setFeedback("");
 
       alert("Idea accepted");
     } catch (error) {
@@ -84,6 +97,13 @@ function Admin() {
         `http://127.0.0.1:8000/rejectIdea/${selectedIdea.idea_id}`,
         {
           method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            rating: Number(rating),
+            feedback: feedback,
+          }),
         },
       );
       const data = await res.json();
@@ -94,6 +114,8 @@ function Admin() {
 
       setShowDetails(false);
       setSelectedIdea(null);
+
+      setFeedback("");
     } catch (error) {
       console.error("Reject Error:", error);
     }
@@ -142,13 +164,13 @@ function Admin() {
             </p>
           </div>
 
-          {/* FORWARDED */}
+          {/* REJECTED */}
           <div className="glass rounded-3xl p-6">
             <h2 className="text-muted-foreground text-sm font-medium">
-              Forwarded
+              Rejected
             </h2>
             <p className="text-5xl font-bold mt-5 text-highlight">
-              {stats.forwarded}
+              {stats.rejected}
             </p>
           </div>
         </div>
@@ -187,6 +209,10 @@ function Admin() {
                           className="text-primary font-semibold hover:underline"
                           onClick={() => {
                             setSelectedIdea(idea);
+
+                            setRating(idea.rating || 5);
+                            setFeedback(idea.admin_feedback || "");
+
                             setShowDetails(true);
                           }}
                         >
@@ -241,9 +267,9 @@ function Admin() {
         {/* DEATILS POP-UP */}
         {showDetails && selectedIdea && (
           <div className="fixed inset-0 flex justify-center items-center bg-black/60 z-50">
-            <div className="glass-strong w-[650px] rounded-3xl p-8">
+            <div className="glass-strong w-[650px] max-h-[90vh] overflow-y-auto rounded-3xl p-8">
               {/* HEADER */}
-              <div>
+              <div className="flex justify-between itrms-center mb-6">
                 <h2>Idea Details</h2>
                 <button
                   className="text-red-400 text-2xl"
@@ -284,6 +310,28 @@ function Admin() {
                 <h3 className="text-lg">₹ {selectedIdea.budget}</h3>
               </div>
 
+              {/* Rating-pop-up */}
+              {selectedIdea.rating && (
+                <div className="mb-4">
+                  <p className="text-sm text-muted-foreground">Rating</p>
+
+                  <h3 className="text-lg">
+                    {"⭐".repeat(selectedIdea.rating)}
+                  </h3>
+                </div>
+              )}
+
+              {/* Admin Feedback */}
+              {selectedIdea.admin_feedback && (
+                <div className="mb-4">
+                  <p className="text-sm text-muted-foreground">
+                    Admin Feedback
+                  </p>
+
+                  <h3 className="text-lg">{selectedIdea.admin_feedback}</h3>
+                </div>
+              )}
+
               {/* Details */}
               <div className="mb-6">
                 <p className="text-sm text-muted-foreground">Details</p>
@@ -291,21 +339,65 @@ function Admin() {
                 <h3 className="text-lg">{selectedIdea.details}</h3>
               </div>
 
-              {/* Buttons */}
-              <div className="flex gap-4">
-                <button
-                  className="bg-green-500 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition"
-                  onClick={handleAccept}
+              {/* Rating */}
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground mb-2">Rating</p>
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  className="w-full p-3 rounded-xl bg-surface border border-border"
                 >
-                  Accept
-                </button>
-                <button
-                  className="bg-red-500 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition"
-                  onClick={handleReject}
-                >
-                  Reject
-                </button>
+                  <option value="1">⭐ 1</option>
+                  <option value="2">⭐ 2</option>
+                  <option value="3">⭐ 3</option>
+                  <option value="4">⭐ 4</option>
+                  <option value="5">⭐ 5</option>
+                </select>
               </div>
+
+              {/* Admin Feedback */}
+              <div className="mb-6">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Admin Feedback
+                </p>
+                <textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  rows={3}
+                  placeholder="Enter Admin Feedback"
+                  className="w-full p-3 rounded-xl bg-surface border border-border"
+                />
+              </div>
+
+              {/* Buttons */}
+              {selectedIdea.status === "Forwarded" && (
+                <div className="flex gap-4">
+                  <button
+                    className="bg-green-500 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition"
+                    onClick={() => {
+                      if (!rating) {
+                        alert("Please select rating");
+                        return;
+                      }
+                      handleAccept();
+                    }}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className="bg-red-500 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition"
+                    onClick={() => {
+                      if (!feedback.trim()) {
+                        alert("Please enter feedback");
+                        return;
+                      }
+                      handleReject();
+                    }}
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

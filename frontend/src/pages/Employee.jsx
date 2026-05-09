@@ -202,7 +202,6 @@ function Employee() {
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight font-serif">
             Employee <span className="text-primary italic">Dashboard</span>
           </h2>
-          
         </div>
 
         <Logout />
@@ -296,6 +295,23 @@ function Employee() {
                 <h3 className="text-lg">{selectedIdea.budget}</h3>
               )}
             </div>
+
+            {/* Rating */}
+            {selectedIdea.rating && (
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground">Admin Rating</p>
+
+                <h3 className="text-lg">{"⭐".repeat(selectedIdea.rating)}</h3>
+              </div>
+            )}
+
+            {/* Admin Feedback */}
+            {selectedIdea.admin_feedback && (
+              <div className="mb-4">
+                <p className="text-sm text-muted-foreground">Admin Feedback</p>
+                <h3 className="text-lg">{selectedIdea.admin_feedback}</h3>
+              </div>
+            )}
 
             {/* Details */}
             <div className="mb-4">
