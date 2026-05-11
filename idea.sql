@@ -19,4 +19,5 @@ drop table ideas1;
 
 alter table ideas1 add column rating int null, add column rejection_reason text null;
 alter table ideas1 change rejection_reason admin_feedback text;
+alter table ideas1 add column actual_budget decimal(10,2), add column implementation_details text, add column implementation_image varchar(255), add column kaizen_status varchar(50) default 'Pending';
 select * from ideas1;

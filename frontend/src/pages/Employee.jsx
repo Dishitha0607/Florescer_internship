@@ -29,20 +29,47 @@ function Employee() {
 
   const [ideas, setIdeas] = useState([]);
 
+  const [showKaizenPopup, setShowKaizenPopup] = useState(false);
+  const [kaizenData, setKaizenData] = useState({
+    actualBudget: "",
+    implementationDetails: "",
+    implementationImage: null,
+  });
+
+  const canEditKaizen =
+    selectedIdea?.status === "Accepted" &&
+    selectedIdea?.kaizen_status !== "Kaizen Submitted";
+
+  //state for total stars:
+  const [employeeStars, setEmployeeStars] = useState([]);
+
+  // stats for stars tab:
+  const [activeTab, setActiveTab] = useState("ideas");
+
+  // FETCH STARS:
+  const fetchEmployeeStars = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/employeeStars");
+      const data = await res.json();
+
+      setEmployeeStars(data);
+    } catch (err) {
+      console.log(error);
+    }
+  };
+
   // FETCH IDEAS
   const fetchIdeas = async () => {
     try {
       const res = await fetch("http://127.0.0.1:8000/ideas?email=emp@test.com");
-
       const data = await res.json();
-      // consoling
-      console.log(data);
 
       setIdeas(Array.isArray(data) ? data : []);
-      return data;
+
+      return Array.isArray(data) ? data : []; // 🔥 MUST
     } catch (error) {
-      console.error("Error fetching ideas:", error);
-      return [];
+      console.error(error);
+      return []; // 🔥 MUST
     }
   };
 
@@ -62,6 +89,7 @@ function Employee() {
   useEffect(() => {
     fetchIdeas();
     fetchStats();
+    fetchEmployeeStars();
   }, []);
 
   // HANDLE SUBMIT
@@ -128,16 +156,16 @@ function Employee() {
   // Handling Update
   const handleUpdate = async () => {
     try {
+      if (!selectedIdea) return;
+
       const payload = {
         classification: selectedIdea.classification,
-        budget: parseFloat(selectedIdea.budget),
+        budget: Number(selectedIdea.budget),
         subject: selectedIdea.subject,
         details: selectedIdea.details,
-        targetDate: selectedIdea.target_date,
+        targetDate: selectedIdea.target_date || selectedIdea.targetDate,
         empName: selectedIdea.emp_name,
       };
-
-      console.log(payload);
 
       const res = await fetch(
         `http://127.0.0.1:8000/updateIdea/${selectedIdea.idea_id}`,
@@ -152,15 +180,66 @@ function Employee() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(data?.error || "Update failed");
+      }
+
+      // 🔥 STEP 1: refresh from DB
+      const refreshed = await fetchIdeas();
+
+      // 🔥 STEP 2: get fresh record from DB
+      const freshIdea = refreshed.find(
+        (i) => i.idea_id === selectedIdea.idea_id,
+      );
+
+      // 🔥 STEP 3: update popup with DB truth
+      setSelectedIdea(freshIdea);
+
+      setEditMode(false);
+
+      alert("Saved successfully");
+    } catch (err) {
+      console.error(err);
+      alert("Save failed");
+    }
+  };
+
+  // just added.........................
+  const handleKaizenSubmit = async () => {
+    try {
+      if (!kaizenData.actualBudget || !kaizenData.implementationDetails) {
+        alert("Please fill required fields");
+        return;
+      }
+
+      const formDataObj = new FormData();
+
+      formDataObj.append("actual_budget", kaizenData.actualBudget);
+      formDataObj.append(
+        "implementation_details",
+        kaizenData.implementationDetails,
+      );
+
+      // ✅ IMAGE OPTIONAL
+      if (kaizenData.implementationImage) {
+        formDataObj.append("image", kaizenData.implementationImage);
+      }
+
+      const res = await fetch(
+        `http://127.0.0.1:8000/submitKaizen/${selectedIdea.idea_id}`,
+        {
+          method: "PUT",
+          body: formDataObj,
+        },
+      );
+
+      const data = await res.json();
       console.log(data);
 
       fetchIdeas();
+      setShowKaizenPopup(false);
 
-      setSelectedIdea(null);
-      setEditMode(false);
-      setShowDetails(false);
-
-      alert("Idea updated successfully");
+      alert("KAIZEN submitted successfully");
     } catch (error) {
       console.error(error);
     }
@@ -194,6 +273,30 @@ function Employee() {
     }
   };
 
+  const handleKaizenForward = async () => {
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/forwardKaizen/${selectedIdea.idea_id}`,
+        {
+          method: "PUT",
+        },
+      );
+
+      const data = await res.json();
+      console.log(data);
+
+      fetchIdeas();
+      fetchStats();
+
+      setShowKaizenPopup(false);
+      setSelectedIdea(null);
+
+      alert("Kaizen forwarded successfully");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="min-h-screen p-8">
       {/* HEADER */}
@@ -204,13 +307,23 @@ function Employee() {
           </h2>
         </div>
 
-        <Logout />
         <Button
           onClick={() => setShowForm(true)}
-          className="animation-fade-in animation-delay-200"
+          className="animation-fade-in animation-delay-200 bg-blue-500
+          text-white
+          px-5
+          py-3
+          rounded-xl
+          font-semibold
+          hover:bg-blue-600
+          transition
+          animation-fade-in
+          animation-delay-200 "
         >
           + New Idea
         </Button>
+
+        <Logout />
       </div>
 
       {/* Details pop-up when u click on the idea_id */}
@@ -333,28 +446,190 @@ function Employee() {
               )}
             </div>
 
-            {/* Button */}
+            {/* BUTTON */}
             <div className="flex gap-4">
-              {!editMode ? (
+              {/* PENDING STATE */}
+              {selectedIdea.status === "Pending" && (
+                <>
+                  {!editMode ? (
+                    <button
+                      onClick={() => setEditMode(true)}
+                      className="bg-primary px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Edit Idea
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleUpdate}
+                      className="bg-green-500 px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Save Changes
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleForward}
+                    className="bg-blue-500 px-6 py-3 rounded-xl font-semibold"
+                  >
+                    Forward
+                  </button>
+                </>
+              )}
+
+              {/* ACCEPTED STATE → OPEN KAIZEN */}
+              {selectedIdea.status === "Accepted" && (
                 <button
-                  onClick={() => setEditMode(true)}
-                  className="bg-primary px-6 py-3 rounded-xl font-semibold"
+                  onClick={() => {
+                    setShowDetails(false);
+                    setKaizenData({
+                      actualBudget:
+                        selectedIdea.actual_budget ??
+                        selectedIdea.actualBudget ??
+                        "",
+                      implementationDetails:
+                        selectedIdea.implementation_details ??
+                        selectedIdea.implementationDetails ??
+                        "",
+                      implementationImage: null,
+                    });
+
+                    setShowKaizenPopup(true);
+                  }}
+                  className="bg-purple-500 px-6 py-3 rounded-xl font-semibold"
                 >
-                  Edit Idea
-                </button>
-              ) : (
-                <button
-                  onClick={handleUpdate}
-                  className="bg-green-500 px-6 py-3 rounded-xl font-semibold"
-                >
-                  Save Changes
+                  Kaizen Details
                 </button>
               )}
+
+              {/* ❌ REJECTED STATE → ALLOW EDIT + FORWARD AGAIN */}
+              {selectedIdea.status === "Rejected" && (
+                <>
+                  {!editMode ? (
+                    <button
+                      onClick={() => setEditMode(true)}
+                      className="bg-primary px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Edit Idea
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleUpdate}
+                      className="bg-green-500 px-6 py-3 rounded-xl font-semibold"
+                    >
+                      Save Changes
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleForward}
+                    className="bg-blue-500 px-6 py-3 rounded-xl font-semibold"
+                  >
+                    Forward Again
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* KAIZEN POP-UP */}
+      {showKaizenPopup && selectedIdea && (
+        <div className="flex justify-between items-center mb-8">
+          <div
+            className="
+              glass-strong
+              w-[550px]
+              rounded-3xl
+              p-8
+              border border-border
+              shadow-2xl
+              animation-fade-in"
+          >
+            {/* HEADER */}
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold">
+                Kaizen Implementation
+                <span className="text-primary">.</span>
+              </h2>
+
               <button
-                onClick={handleForward}
+                className="text-red-400 text-2xl hover:scale-125 transition"
+                onClick={() => setShowKaizenPopup(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* IDEA */}
+            <div className="mb-6">
+              <p className="text-sm text-muted-foreground">Idea</p>
+              <h3 className="text-xl">{selectedIdea.subject}</h3>
+            </div>
+
+            {/* ACTUAL BUDGET */}
+            <div>
+              <p>Actual Budget</p>
+              <input
+                type="number"
+                value={kaizenData.actualBudget}
+                onChange={(e) =>
+                  setKaizenData({ ...kaizenData, actualBudget: e.target.value })
+                }
+                className="w-full p-3 rounded-xl bg-surface border border-border"
+              />
+            </div>
+
+            {/* IMPLEMENTATION DETAILS */}
+            <div className="mb-4">
+              <p className="mb-2">Implementation Details</p>
+
+              <textarea
+                rows={4}
+                value={kaizenData.implementationDetails}
+                onChange={(e) =>
+                  setKaizenData({
+                    ...kaizenData,
+                    implementationDetails: e.target.value,
+                  })
+                }
+                className="w-full p-3 rounded-xl bg-surface border border-border"
+              />
+            </div>
+
+            {/* IMAGE */}
+            <div className="mb-6">
+              <p className="mb-2">Upload Proof Image</p>
+
+              <input
+                type="file"
+                onChange={(e) =>
+                  setKaizenData({
+                    ...kaizenData,
+                    implementationImage: e.target.files[0],
+                  })
+                }
+              />
+            </div>
+
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={handleKaizenSubmit}
+                disabled={!canEditKaizen}
+                className={`px-6 py-3 rounded-xl font-semibold ${
+                  canEditKaizen
+                    ? "bg-primary"
+                    : "bg-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Save Kaizen
+              </button>
+
+              <button
+                onClick={handleKaizenForward}
                 className="bg-blue-500 px-6 py-3 rounded-xl font-semibold"
               >
-                Forward
+                Forward Final
               </button>
             </div>
           </div>
@@ -408,87 +683,165 @@ function Employee() {
 
       {/* TABLE */}
       <div className="mt-10 glass rounded-3xl p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-medium font-serif">Submitted Ideas</h2>
+        <div className="flex gap-4 mb-6">
+          <button
+            onClick={() => setActiveTab("ideas")}
+            className={`px-5 py-2 rounded-xl font-semibold transition ${
+              activeTab === "ideas" ? "bg-primary text-white" : "bg-surface"
+            }`}
+          >
+            Submitted Ideas
+          </button>
+
+          <button
+            onClick={() => setActiveTab("ratings")}
+            className={`px-5 py-2 rounded-xl font-semibold transition ${
+              activeTab === "ratings" ? "bg-primary text-white" : "bg-surface"
+            }`}
+          >
+            Employee Ratings
+          </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b text-left">
-                <th className="p-4 text-muted-foreground">S.No</th>
-                <th className="p-4 text-muted-foreground">Idea ID</th>
-                <th className="p-4 text-muted-foreground">Created Date</th>
-                <th className="p-4 text-muted-foreground">Subject</th>
-                <th className="p-4 text-muted-foreground">Employee</th>
-                <th className="p-4 text-muted-foreground">Target Date</th>
-                <th className="p-4 text-muted-foreground">Status</th>
-              </tr>
-            </thead>
+        {/* TABLE CONTENT */}
+        {activeTab === "ideas" ? (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="p-4 text-muted-foreground">S.No</th>
+                  <th className="p-4 text-muted-foreground">Idea ID</th>
+                  <th className="p-4 text-muted-foreground">Created Date</th>
+                  <th className="p-4 text-muted-foreground">Subject</th>
+                  <th className="p-4 text-muted-foreground">Employee</th>
+                  <th className="p-4 text-muted-foreground">Target Date</th>
+                  <th className="p-4 text-muted-foreground">Status</th>
+                  <th className="p-4 text-muted-foreground">Kaizen Status</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {ideas.length > 0 ? (
-                ideas.map((idea, idx) => (
-                  <tr
-                    key={idea.idea_id}
-                    className="border-b hover:bg-surface transition"
-                  >
-                    <td className="p-4">{idx + 1}</td>
+              <tbody>
+                {ideas.length > 0 ? (
+                  ideas.map((idea, idx) => (
+                    <tr
+                      key={idea.idea_id}
+                      className="border-b hover:bg-surface transition"
+                    >
+                      <td className="p-4">{idx + 1}</td>
 
-                    <td className="p-4">
-                      <button
-                        className="text-primary font-semibold hover:underline"
-                        onClick={() => {
-                          setSelectedIdea(idea);
-                          setShowDetails(true);
-                        }}
-                      >
-                        {idea.idea_id}
-                      </button>
-                    </td>
+                      <td className="p-4">
+                        <button
+                          className="text-primary font-semibold hover:underline"
+                          onClick={() => {
+                            setSelectedIdea(idea);
+                            setShowDetails(true);
+                          }}
+                        >
+                          {idea.idea_id}
+                        </button>
+                      </td>
 
-                    <td className="p-4">
-                      {String(idea.created_at).split("T")[0]}
-                    </td>
+                      <td className="p-4">
+                        {String(idea.created_at).split("T")[0]}
+                      </td>
 
-                    <td className="p-4">{idea.subject}</td>
+                      <td className="p-4">{idea.subject}</td>
 
-                    <td className="p-4">{idea.emp_name}</td>
+                      <td className="p-4">{idea.emp_name}</td>
 
-                    <td className="p-4">
-                      {String(idea.target_date).split("T")[0]}
-                    </td>
+                      <td className="p-4">
+                        {String(idea.target_date).split("T")[0]}
+                      </td>
 
-                    <td className="p-4">
-                      <span
-                        className={`px-5 py-2 rounded-full text-sm font-medium ${
-                          idea.status === "Accepted"
-                            ? "bg-green-500/20 text-green-400"
-                            : idea.status === "Rejected"
-                              ? "bg-red-500/20 text-red-400"
-                              : idea.status === "Forwarded"
-                                ? "bg-blue-500/20 text-blue-400"
-                                : "bg-yellow-500/20 text-yellow-400"
-                        }`}
-                      >
-                        {idea.status}
-                      </span>
+                      <td className="p-4">
+                        <span
+                          className={`px-5 py-2 rounded-full text-sm font-medium ${
+                            idea.status === "Accepted"
+                              ? "bg-green-500/20 text-green-400"
+                              : idea.status === "Rejected"
+                                ? "bg-red-500/20 text-red-400"
+                                : idea.status === "Forwarded"
+                                  ? "bg-blue-500/20 text-blue-400"
+                                  : "bg-yellow-500/20 text-yellow-400"
+                          }`}
+                        >
+                          {idea.status}
+                        </span>
+                      </td>
+
+                      <td className="p-4">
+                        <span
+                          className={`px-5 py-2 rounded-full text-sm font-medium ${
+                            idea.kaizen_status === "Approved"
+                              ? "bg-green-500/20 text-green-400"
+                              : idea.kaizen_status === "Rejected"
+                                ? "bg-red-500/20 text-red-400"
+                                : idea.kaizen_status === "Under Review"
+                                  ? "bg-yellow-500/20 text-yellow-400"
+                                  : "bg-gray-500/20 text-gray-400"
+                          }`}
+                        >
+                          {idea.kaizen_status || "Not Started"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="text-center p-8 text-muted-foreground"
+                    >
+                      No ideas submitted yet.
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="7"
-                    className="text-center p-8 text-muted-foreground"
-                  >
-                    No ideas submitted yet.
-                  </td>
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b text-left">
+                  <th className="p-4 text-muted-foreground">Rank</th>
+                  <th className="p-4 text-muted-foreground">Employee Name</th>
+                  <th className="p-4 text-muted-foreground">Total Stars</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+
+              <tbody>
+                {employeeStars.length > 0 ? (
+                  employeeStars.map((emp, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-b hover:bg-surface transition"
+                    >
+                      <td className="p-4 font-semibold">#{idx + 1}</td>
+
+                      <td className="p-4">{emp.emp_name}</td>
+
+                      <td className="p-4">
+                        <span className="text-yellow-400 font-bold text-lg">
+                          ⭐ {emp.total_stars}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="3"
+                      className="text-center p-8 text-muted-foreground"
+                    >
+                      No ratings available.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* MODAL */}

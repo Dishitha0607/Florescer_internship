@@ -121,6 +121,52 @@ function Admin() {
     }
   };
 
+  const handleKaizenApprove = async () => {
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/approveKaizen/${selectedIdea.idea_id}`,
+        {
+          method: "PUT",
+        },
+      );
+
+      const data = await res.json();
+
+      console.log(data);
+
+      fetchIdeas();
+
+      alert("Kaizen Approved");
+
+      setShowDetails(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleKaizenReject = async () => {
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/rejectKaizen/${selectedIdea.idea_id}`,
+        {
+          method: "PUT",
+        },
+      );
+
+      const data = await res.json();
+
+      console.log(data);
+
+      fetchIdeas();
+
+      alert("Kaizen Rejected");
+
+      setShowDetails(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen p-8">
@@ -192,6 +238,7 @@ function Admin() {
                   <th className="p-4 text-muted-foreground">Employee</th>
                   <th className="p-4 text-muted-foreground">Target Date</th>
                   <th className="p-4 text-muted-foreground">Status</th>
+                  <th className="p-4 text-muted-foreground">Kaizen Status</th>
                 </tr>
               </thead>
 
@@ -247,12 +294,27 @@ function Admin() {
                           {idea.status}
                         </span>
                       </td>
+                      <td className="p-4">
+                        <span
+                          className={`px-5 py-2 rounded-full text-sm font-medium ${
+                            idea.kaizen_status === "Approved"
+                              ? "bg-green-500/20 text-green-400"
+                              : idea.kaizen_status === "Rejected"
+                                ? "bg-red-500/20 text-red-400"
+                                : idea.kaizen_status === "Under Review"
+                                  ? "bg-yellow-500/20 text-yellow-400"
+                                  : "bg-gray-500/20 text-gray-400"
+                          }`}
+                        >
+                          {idea.kaizen_status || "Not Submitted"}
+                        </span>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
                     <td
-                      colSpan="7"
+                      colSpan="8"
                       className="text-center p-8 text-muted-foreground"
                     >
                       No ideas submitted yet.
@@ -338,6 +400,73 @@ function Admin() {
 
                 <h3 className="text-lg">{selectedIdea.details}</h3>
               </div>
+
+              {/* KAIZEN DETAILS */}
+              {selectedIdea.implementation_details && (
+                <>
+                  {/* Actual Budget */}
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground">
+                      Actual Budget
+                    </p>
+
+                    <h3 className="text-lg">₹ {selectedIdea.actual_budget}</h3>
+                  </div>
+
+                  {/* Implementation Details */}
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground">
+                      Implementation Details
+                    </p>
+
+                    <h3 className="text-lg">
+                      {selectedIdea.implementation_details}
+                    </h3>
+                  </div>
+
+                  {/* Kaizen Status */}
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground">
+                      Kaizen Status
+                    </p>
+
+                    <h3 className="text-lg">{selectedIdea.kaizen_status}</h3>
+                  </div>
+
+                  {/* Image */}
+                  {selectedIdea.implementation_image && (
+                    <div className="mb-4">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Implementation Image
+                      </p>
+
+                      <img
+                        src={`http://127.0.0.1:8000/uploads/${selectedIdea.implementation_image}`}
+                        alt="Kaizen"
+                        className="rounded-2xl w-full h-60 object-cover"
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+
+              {selectedIdea.kaizen_status === "Under Review" && (
+                <div className="flex gap-4 mt-6">
+                  <button
+                    className="bg-green-500 px-6 py-3 rounded-xl font-semibold"
+                    onClick={() => handleKaizenApprove()}
+                  >
+                    Approve Kaizen
+                  </button>
+
+                  <button
+                    className="bg-red-500 px-6 py-3 rounded-xl font-semibold"
+                    onClick={() => handleKaizenReject()}
+                  >
+                    Reject Kaizen
+                  </button>
+                </div>
+              )}
 
               {/* Rating */}
               <div className="mb-4">

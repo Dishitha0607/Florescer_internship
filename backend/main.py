@@ -1,11 +1,16 @@
+from typing import Optional
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from passlib.context import CryptContext
 import mysql.connector
 import random
+from fastapi import UploadFile,File,Form
+import shutil
 
 app = FastAPI()
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # =========================
 # CORS
@@ -406,24 +411,29 @@ def forward_idea(idea_id:str):
 
         query = """
         UPDATE ideas1
-        SET status=%s
-        WHERE idea_id=%s        
+        SET
+            status=%s,
+            rating=NULL,
+            admin_feedback=NULL
+        WHERE idea_id=%s
         """
 
-        cursor.execute(query , ("Forwarded" , idea_id))
+        cursor.execute(query, ("Forwarded", idea_id))
 
         db.commit()
+
         cursor.close()
         db.close()
 
-        return{
-            "message" : "Idea forwarded to Admin"
-        }
-    
-    except Exception as e:
-        print("ERROR /forwardIdea:",e)
         return {
-            "error":str(e)
+            "message": "Idea forwarded to Admin"
+        }
+
+    except Exception as e:
+        print("ERROR /forwardIdea:", e)
+
+        return {
+            "error": str(e)
         }
 
 # =========================
@@ -515,3 +525,153 @@ def reject_idea(idea_id:str , data:ReviewIdea):
             "error": str(e)
         }
     
+
+@app.put("/submitKaizen/{idea_id}")
+async def submit_kaizen(
+    idea_id: str,
+    actual_budget: float = Form(...),
+    implementation_details: str = Form(...),
+    image: Optional[UploadFile] = File(None)
+):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        # SAVE IMAGE
+        if image:
+            image_path = f"uploads/{image.filename}"
+
+            with open(image_path, "wb") as buffer:
+                shutil.copyfileobj(image.file, buffer)
+
+            image_name = image.filename
+
+        else:
+            image_name = None
+
+        query = """
+        UPDATE ideas1
+        SET
+            actual_budget=%s,
+            implementation_details=%s,
+            implementation_image=%s,
+            kaizen_status=%s
+        WHERE idea_id=%s
+        """
+
+        values = (
+            actual_budget,
+            implementation_details,
+            image_name,
+            "Under Review",
+            idea_id
+        )
+
+        cursor.execute(query, values)
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return {
+            "message": "Kaizen submitted successfully"
+        }
+
+    except Exception as e:
+        print("ERROR /submitKaizen:", e)
+
+        return {
+            "error": str(e)
+        }
+    
+
+
+@app.put("/approveKaizen/{idea_id}")
+def approve_kaizen(idea_id: str):
+
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        query = """
+        UPDATE ideas1
+        SET kaizen_status=%s
+        WHERE idea_id=%s
+        """
+
+        cursor.execute(query, ("Approved", idea_id))
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return {
+            "message": "Kaizen Approved"
+        }
+
+    except Exception as e:
+        print("ERROR /approveKaizen:", e)
+
+        return {
+            "error": str(e)
+        }
+    
+
+@app.put("/rejectKaizen/{idea_id}")
+def reject_kaizen(idea_id: str):
+
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        query = """
+        UPDATE ideas1
+        SET kaizen_status=%s
+        WHERE idea_id=%s
+        """
+
+        cursor.execute(query, ("Rejected", idea_id))
+
+        db.commit()
+
+        cursor.close()
+        db.close()
+
+        return {
+            "message": "Kaizen Rejected"
+        }
+
+    except Exception as e:
+        print("ERROR /rejectKaizen:", e)
+
+        return {
+            "error": str(e)
+        }
+
+# =========================
+# EMPLOYEE TOTAL STARS
+# =========================
+@app.get("/employeeStars")
+def employee_star():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        query = """
+        SELECT emp_name, COALESCE(SUM(rating),0) AS total_stars
+        FROM ideas1 GROUP BY emp_name
+        ORDER BY total_stars DESC
+        """
+
+        cursor.execute(query)
+        result = cursor.fetchall()
+        cursor.close()
+        db.close()
+
+        return result
+    
+    except Exception as e:
+        print("ERROR /employeeStars:" , e)
+        return[]
