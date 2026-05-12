@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Logout from "../components/Logout";
+import Button from "../components/common/Button";
+import Logout from "../components/common/Logout";
 
 function Admin1() {
   const [ideas, setIdeas] = useState([]);

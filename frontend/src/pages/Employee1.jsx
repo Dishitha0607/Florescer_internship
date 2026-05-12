@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Button from "../components/Button";
-import Logout from "../components/Logout";
+import Button from "../components/common/Button";
+import Logout from "../components/common/Logout";
 
 function Employee1() {
   const [showForm, setShowForm] = useState(false);
