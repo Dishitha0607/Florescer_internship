@@ -183,6 +183,14 @@ This platform encourages employees to contribute small but meaningful improvemen
 
 ---
 
+# 📄 Documentation
+
+Detailed project documentation can be viewed here:
+
+[View Google Docs Documentation](https://docs.google.com/document/d/1lVZMne9thWVJuwaBhofopWHDCim173NyFnDvMSejnb4/edit?usp=sharing)
+
+---
+
 # ✨ Author
 Dishitha V
 
