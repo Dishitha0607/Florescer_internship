@@ -34,7 +34,11 @@ def login_service(user):
             u["email"] == user.email
             and pwd_context.verify(user.password, u["password"])
         ):
-            return {"role": u["role"]}
+            return {
+                "email" : u["email"],
+                "password" : u["password"],
+                "role": u["role"]
+            }
 
     raise HTTPException(
         status_code=401,

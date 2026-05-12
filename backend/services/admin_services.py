@@ -12,9 +12,10 @@ def dashboard_stats_service():
         query = """
         SELECT 
             COUNT(*) AS total,
-            SUM(status = 'Pending') AS pending,
+            SUM(status IN ('Pending', 'Forwarded')) AS pending,
             SUM(status = 'Accepted') AS accepted,
-            SUM(status = 'Rejected') AS rejected
+            SUM(status = 'Rejected') AS rejected,
+            SUM(status = 'Forwarded') AS forwarded
         FROM ideas1
         """
 
