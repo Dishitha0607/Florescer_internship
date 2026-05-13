@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { approveIdea, rejectIdea, approveKaizen, rejectKaizen } from "../../api/adminApi";
+import {
+  approveIdea,
+  rejectIdea,
+  approveKaizen,
+  rejectKaizen,
+} from "../../api/adminApi";
 
 export default function IdeaDetailsModal({ idea, onClose, onRefresh }) {
   const [rating, setRating] = useState(idea.rating || 5);
@@ -37,11 +42,12 @@ export default function IdeaDetailsModal({ idea, onClose, onRefresh }) {
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black/60 z-50">
       <div className="glass-strong w-[650px] max-h-[90vh] overflow-y-auto rounded-3xl p-8">
-
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2>Idea Details</h2>
-          <button className="text-red-400 text-2xl" onClick={onClose}>✕</button>
+          <h2 className="text-3xl font-bold">Idea Details</h2>
+          <button className="text-red-400 text-2xl" onClick={onClose}>
+            ✕
+          </button>
         </div>
 
         {/* Fields */}
@@ -53,9 +59,51 @@ export default function IdeaDetailsModal({ idea, onClose, onRefresh }) {
         ].map(({ label, value, highlight }) => (
           <div key={label} className="mb-4">
             <p className="text-sm text-muted-foreground">{label}</p>
-            <h3 className={`text-lg ${highlight ? "text-xl font-semibold text-primary" : ""}`}>{value}</h3>
+            <h3
+              className={`text-lg ${highlight ? "text-xl font-semibold text-primary" : ""}`}
+            >
+              {value}
+            </h3>
           </div>
         ))}
+
+        {/* STATUS - ONLY SMALL SCREEN */}
+        <div className="mb-4 md:hidden flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">Status :</p>
+
+          <span
+            className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              idea.status === "Accepted"
+                ? "bg-green-500/20 text-green-400"
+                : idea.status === "Rejected"
+                  ? "bg-red-500/20 text-red-400"
+                  : idea.status === "Forwarded"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "bg-yellow-500/20 text-yellow-400"
+            }`}
+          >
+            {idea.status}
+          </span>
+        </div>
+
+        {/* KAIZEN STATUS - SMALL + MEDIUM */}
+        <div className="mb-4 lg:hidden flex items-center gap-3">
+          <p className="text-sm text-muted-foreground">Kaizen Status :</p>
+
+          <span
+            className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              idea.kaizen_status === "Approved"
+                ? "bg-green-500/20 text-green-400"
+                : idea.kaizen_status === "Rejected"
+                  ? "bg-red-500/20 text-red-400"
+                  : idea.kaizen_status === "Under Review"
+                    ? "bg-yellow-500/20 text-yellow-400"
+                    : "bg-gray-500/20 text-gray-400"
+            }`}
+          >
+            {idea.kaizen_status || "Not Started"}
+          </span>
+        </div>
 
         {idea.rating && (
           <div className="mb-4">
@@ -84,16 +132,17 @@ export default function IdeaDetailsModal({ idea, onClose, onRefresh }) {
               <h3 className="text-lg">₹ {idea.actual_budget}</h3>
             </div>
             <div className="mb-4">
-              <p className="text-sm text-muted-foreground">Implementation Details</p>
+              <p className="text-sm text-muted-foreground">
+                Implementation Details
+              </p>
               <h3 className="text-lg">{idea.implementation_details}</h3>
             </div>
-            <div className="mb-4">
-              <p className="text-sm text-muted-foreground">Kaizen Status</p>
-              <h3 className="text-lg">{idea.kaizen_status}</h3>
-            </div>
+
             {idea.implementation_image && (
               <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-2">Implementation Image</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Implementation Image
+                </p>
                 <img
                   src={`http://127.0.0.1:8000/uploads/${idea.implementation_image}`}
                   alt="Kaizen"
@@ -107,10 +156,16 @@ export default function IdeaDetailsModal({ idea, onClose, onRefresh }) {
         {/* Kaizen Actions */}
         {idea.kaizen_status === "Under Review" && (
           <div className="flex gap-4 mt-6">
-            <button className="bg-green-500 px-6 py-3 rounded-xl font-semibold" onClick={handleKaizenApprove}>
+            <button
+              className="bg-green-500 px-6 py-3 rounded-xl font-semibold"
+              onClick={handleKaizenApprove}
+            >
               Approve Kaizen
             </button>
-            <button className="bg-red-500 px-6 py-3 rounded-xl font-semibold" onClick={handleKaizenReject}>
+            <button
+              className="bg-red-500 px-6 py-3 rounded-xl font-semibold"
+              onClick={handleKaizenReject}
+            >
               Reject Kaizen
             </button>
           </div>
@@ -125,7 +180,9 @@ export default function IdeaDetailsModal({ idea, onClose, onRefresh }) {
             className="w-full p-3 rounded-xl bg-surface border border-border"
           >
             {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n}>{"⭐".repeat(n)} {n}</option>
+              <option key={n} value={n}>
+                {"⭐".repeat(n)} {n}
+              </option>
             ))}
           </select>
         </div>

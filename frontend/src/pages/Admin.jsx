@@ -11,15 +11,21 @@ function Admin1() {
 
   const handleSelect = (idea) => setSelectedIdea(idea);
   const handleClose = () => setSelectedIdea(null);
-  const handleRefresh = () => { fetchIdeas(); fetchStats(); };
+  const handleRefresh = () => {
+    fetchIdeas();
+    fetchStats();
+  };
 
   return (
     <div className="min-h-screen p-8">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center flex-wrap mb-8">
+        {/* TITLE */}
         <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight font-serif">
           Admin <span className="text-primary italic">Dashboard</span>
         </h2>
-        <Logout />
+        <div className="flex items-center gap-3">
+          <Logout />
+        </div>
       </div>
 
       <StatCards stats={stats} />

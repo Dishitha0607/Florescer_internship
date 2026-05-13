@@ -6,19 +6,32 @@ export default function IdeasTable({ ideas, onSelect }) {
           <tr className="border-b text-left">
             <th className="p-4 text-muted-foreground">S.No</th>
             <th className="p-4 text-muted-foreground">Idea ID</th>
-            <th className="p-4 text-muted-foreground">Created Date</th>
-            <th className="p-4 text-muted-foreground">Subject</th>
+            <th className="hidden lg:table-cell p-4 text-muted-foreground">
+              Created Date
+            </th>
+            <th className="hidden md:table-cell p-4 text-muted-foreground">
+              Subject
+            </th>
             <th className="p-4 text-muted-foreground">Employee</th>
-            <th className="p-4 text-muted-foreground">Target Date</th>
-            <th className="p-4 text-muted-foreground">Status</th>
-            <th className="p-4 text-muted-foreground">Kaizen Status</th>
+            <th className="hidden lg:table-cell p-4 text-muted-foreground">
+              Target Date
+            </th>
+            <th className="hidden md:table-cell p-4 text-muted-foreground">
+              Status
+            </th>
+            <th className="hidden md:table-cell p-4 text-muted-foreground">
+              Kaizen Status
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {ideas.length > 0 ? (
             ideas.map((idea, idx) => (
-              <tr key={idea.idea_id} className="border-b hover:bg-surface transition">
+              <tr
+                key={idea.idea_id}
+                className="border-b hover:bg-surface transition"
+              >
                 <td className="p-4">{idx + 1}</td>
 
                 <td className="p-4">
@@ -30,12 +43,16 @@ export default function IdeasTable({ ideas, onSelect }) {
                   </button>
                 </td>
 
-                <td className="p-4">{String(idea.created_at).split("T")[0]}</td>
-                <td className="p-4">{idea.subject}</td>
+                <td className=" hidden lg:table-cell p-4">
+                  {String(idea.created_at).split("T")[0]}
+                </td>
+                <td className="hidden md:table-cell p-4">{idea.subject}</td>
                 <td className="p-4">{idea.emp_name}</td>
-                <td className="p-4">{String(idea.target_date).split("T")[0]}</td>
+                <td className="hidden lg:table-cell p-4">
+                  {String(idea.target_date).split("T")[0]}
+                </td>
 
-                <td className="p-4">
+                <td className="hidden md:table-cell p-4">
                   <span
                     className={`px-5 py-2 rounded-full text-sm font-medium ${
                       idea.status === "Accepted"
@@ -51,9 +68,9 @@ export default function IdeasTable({ ideas, onSelect }) {
                   </span>
                 </td>
 
-                <td className="p-4">
+                <td className="hidden md:table-cell p-4">
                   <span
-                    className={`px-5 py-2 rounded-full text-sm font-medium ${
+                    className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
                       idea.kaizen_status === "Approved"
                         ? "bg-green-500/20 text-green-400"
                         : idea.kaizen_status === "Rejected"

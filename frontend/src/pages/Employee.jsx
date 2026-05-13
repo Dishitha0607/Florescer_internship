@@ -10,7 +10,8 @@ import IdeaDetailsModal from "../components/employee/IdeaDetailsModal";
 import KaizenModal from "../components/employee/KaizenModal";
 
 function Employee1() {
-  const { ideas, stats, employeeStars, fetchIdeas, fetchStats } = useEmployeeData();
+  const { ideas, stats, employeeStars, fetchIdeas, fetchStats } =
+    useEmployeeData();
 
   const [showForm, setShowForm] = useState(false);
   const [errors, setError] = useState({});
@@ -43,8 +44,10 @@ function Employee1() {
   const handleSubmit = async () => {
     let newErrors = {};
     if (!formData.subject.trim()) newErrors.subject = "Subject is required";
-    if (!formData.empName.trim()) newErrors.empName = "Employee name is required";
-    if (!formData.classification.trim()) newErrors.classification = "Classification is required";
+    if (!formData.empName.trim())
+      newErrors.empName = "Employee name is required";
+    if (!formData.classification.trim())
+      newErrors.classification = "Classification is required";
     if (!formData.targetDate) newErrors.targetDate = "Target date is required";
     if (!formData.budget) newErrors.budget = "Budget is required";
     if (!formData.details.trim()) newErrors.details = "Details are required";
@@ -76,7 +79,15 @@ function Employee1() {
       console.log("Submitted:", data);
       fetchIdeas();
       fetchStats();
-      setFormData({ classification: "", budget: "", subject: "", details: "", targetDate: "", employeeEmail: "emp@test.com", empName: "" });
+      setFormData({
+        classification: "",
+        budget: "",
+        subject: "",
+        details: "",
+        targetDate: "",
+        employeeEmail: "emp@test.com",
+        empName: "",
+      });
       setShowForm(false);
     } catch (error) {
       console.error("Submit error:", error);
@@ -94,15 +105,20 @@ function Employee1() {
         targetDate: selectedIdea.target_date || selectedIdea.targetDate,
         empName: selectedIdea.emp_name,
       };
-      const res = await fetch(`http://127.0.0.1:8000/updateIdea/${selectedIdea.idea_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        `http://127.0.0.1:8000/updateIdea/${selectedIdea.idea_id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Update failed");
       const refreshed = await fetchIdeas();
-      const freshIdea = refreshed.find((i) => i.idea_id === selectedIdea.idea_id);
+      const freshIdea = refreshed.find(
+        (i) => i.idea_id === selectedIdea.idea_id,
+      );
       setSelectedIdea(freshIdea);
       setEditMode(false);
       alert("Saved successfully");
@@ -120,18 +136,26 @@ function Employee1() {
       }
       const formDataObj = new FormData();
       formDataObj.append("actual_budget", kaizenData.actualBudget);
-      formDataObj.append("implementation_details", kaizenData.implementationDetails);
+      formDataObj.append(
+        "implementation_details",
+        kaizenData.implementationDetails,
+      );
       if (kaizenData.implementationImage) {
         formDataObj.append("image", kaizenData.implementationImage);
       }
-      const res = await fetch(`http://127.0.0.1:8000/submitKaizen/${selectedIdea.idea_id}`, {
-        method: "PUT",
-        body: formDataObj,
-      });
+      const res = await fetch(
+        `http://127.0.0.1:8000/submitKaizen/${selectedIdea.idea_id}`,
+        {
+          method: "PUT",
+          body: formDataObj,
+        },
+      );
       const data = await res.json();
       console.log(data);
       const refreshIdeas = await fetchIdeas();
-      const updateIdea = refreshIdeas.find((idea) => idea.idea_id === selectedIdea.idea_id);
+      const updateIdea = refreshIdeas.find(
+        (idea) => idea.idea_id === selectedIdea.idea_id,
+      );
       setSelectedIdea(updateIdea);
       setShowKaizenPopup(false);
       alert("KAIZEN saved successfully");
@@ -142,7 +166,10 @@ function Employee1() {
 
   const handleForward = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/forwardIdea/${selectedIdea.idea_id}`, { method: "PUT" });
+      const res = await fetch(
+        `http://127.0.0.1:8000/forwardIdea/${selectedIdea.idea_id}`,
+        { method: "PUT" },
+      );
       const data = await res.json();
       console.log(data);
       fetchIdeas();
@@ -157,7 +184,10 @@ function Employee1() {
 
   const handleKaizenForward = async () => {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/forwardKaizen/${selectedIdea.idea_id}`, { method: "PUT" });
+      const res = await fetch(
+        `http://127.0.0.1:8000/forwardKaizen/${selectedIdea.idea_id}`,
+        { method: "PUT" },
+      );
       const data = await res.json();
       console.log(data);
       fetchIdeas();
@@ -173,19 +203,23 @@ function Employee1() {
   return (
     <div className="min-h-screen p-8">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex justify-between items-center p-2">
+      <div className="flex justify-between items-center flex-wrap gap-4 mb-8">
+        {/* TITLE */}
+        <div className="p-2">
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight font-serif">
             Employee <span className="text-primary italic">Dashboard</span>
           </h2>
         </div>
-        <Button
-          onClick={() => setShowForm(true)}
-          className="animation-fade-in animation-delay-200 bg-blue-500 text-white px-5 py-3 rounded-xl font-semibold hover:bg-blue-600 transition animation-fade-in animation-delay-200"
-        >
-          + New Idea
-        </Button>
-        <Logout />
+        {/* BUTTONS */}
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => setShowForm(true)}
+            className="bg-blue-500 text-white px-5 py-3 rounded-xl font-semibold hover:bg-blue-600 transition w-full sm:w-auto"
+          >
+            + New Idea
+          </Button>
+          <Logout />
+        </div>
       </div>
 
       <IdeaDetailsModal
