@@ -19,7 +19,7 @@ export default function IdeasTable({ ideas, onSelect }) {
             <th className="hidden md:table-cell p-4 text-muted-foreground">
               Status
             </th>
-            <th className="hidden md:table-cell p-4 text-muted-foreground">
+            <th className="hidden lg:table-cell p-4 text-muted-foreground">
               Kaizen Status
             </th>
           </tr>
@@ -68,7 +68,7 @@ export default function IdeasTable({ ideas, onSelect }) {
                   </span>
                 </td>
 
-                <td className="hidden md:table-cell p-4">
+                <td className="hidden lg:table-cell p-4">
                   <span
                     className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
                       idea.kaizen_status === "Approved"
