@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -23,17 +24,40 @@
   --color-surface: #1a2329;
 }
 
+html,
+body,
+:root,
+.app,
+.content{
+  height: 100%;
+  width: 100%;
+  font-family: 'Source Sans 3' , sans-serif;
+}
+
+/* scroll bar */
+::-webkit-scrollbar{
+  width: 10px;
+}
+
+/* Track - style */
+::-webkit-scrollbar-track{
+  background: #e0e0e0;
+}
+
+/* Hanlde */
+::-webkit-scrollbar-thumb{
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover{
+  background: #555;
+}
+/* ---------------------------------------------------------------------- */
 @layer base{
   html{
     scroll-behavior: smooth;
   }
-
-  body{
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: "Inter", sans-serif;
-  }
-
   .font-serif{
     font-family: "Playfair Display", serif;
   }
@@ -181,5 +205,11 @@
     background-color: color-mix(in srgb, #26c4b8 15%, transparent);
     backdrop-filter: blur(16px);
     box-shadow: 0 0 20px color-mix(in srgb, #26c4b8 20%, transparent);
+  }
+
+  .custom-data-grid .MuiDataGrid-columnHeaders {
+    background-color: #1F2A40;
+    color: white;
+    border-bottom: none;
   }
 }

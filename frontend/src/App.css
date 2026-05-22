@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  
-} */
-
-/* body {
-  font-family:sans-serif;
-  background: linear-gradient(90deg, #acb6d9 , #7e94dc,#5575de);
-}  */
-
 
 /* ---------------------------------LOGIN.JSX--------------------------- */
 .login-page{
@@ -23,7 +11,7 @@
   min-height:100vh;
 }
 
-.container{
+.container1{
   position:relative;
   width:90%;
   max-width: 850px;
@@ -53,7 +41,7 @@
 
 }
 
-.container h1{
+.container1 h1{
   font-size: 36px;
   margin-bottom: 20px;
 }
@@ -137,7 +125,7 @@
 
 @media (max-width: 768px) {
 
-  .container {
+  .container1 {
     width: 95%;
     min-height: 500px;
     display: flex;

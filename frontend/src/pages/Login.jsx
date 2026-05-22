@@ -37,7 +37,7 @@ function Login() {
   return (
     <>
       <div className="login-page">
-        <div className="container">
+        <div className="container1">
           <div className="form-box-login">
             <div className="form-box">
               <h1>Login</h1>
