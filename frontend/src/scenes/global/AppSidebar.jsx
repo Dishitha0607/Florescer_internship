@@ -156,7 +156,7 @@ const AppSidebar = () => {
               />
               <Item
                 title="Invoices Balances"
-                to="/invoices" 
+                to="/invoices"
                 icon={<ReceiptOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -165,7 +165,7 @@ const AppSidebar = () => {
               <Typography
                 variant="h6"
                 color={colors.grey[300]}
-                sx={{ m: "15px 0 5px 20px" }} 
+                sx={{ m: "15px 0 5px 20px" }}
               >
                 Pages
               </Typography>
@@ -173,6 +173,13 @@ const AppSidebar = () => {
                 title="Profile Form"
                 to="/form"
                 icon={<PersonOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Calendar"
+                to="/cal"
+                icon={<CalendarTodayOutlinedIcon/>}
                 selected={selected}
                 setSelected={setSelected}
               />

@@ -14,6 +14,8 @@ import Invoices from "./scenes/Invoices";
 import Profile from "./scenes/Profile";
 import { useState } from "react";
 import { mockDataTeam } from "./data/mockData";
+import Calendar from "./scenes/Calendar";
+import FAQ from "./scenes/Faq";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -51,6 +53,8 @@ function App() {
                     />
                   }
                 ></Route>
+                <Route path="/cal" element={<Calendar />}></Route>
+                <Route path="/faq" element={<FAQ />}></Route>
               </Routes>
             </main>
           </div>
