@@ -131,12 +131,7 @@ const AppSidebar = () => {
             )}
 
             {/* Menu Items */}
-            <div
-              className={isCollapsed ? "" : "pl-[10%]"}
-              rootStyles={{
-                minHeight: "100vh",
-              }}
-            >
+            <div className={isCollapsed ? "" : "pl-[10%]"}>
               <Item
                 title="Dashboard"
                 to="/"
@@ -160,15 +155,8 @@ const AppSidebar = () => {
                 setSelected={setSelected}
               />
               <Item
-                title="Contacts Information"
-                to="/contacts"
-                icon={<ContactsOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
                 title="Invoices Balances"
-                to="/invoices"
+                to="/invoices" 
                 icon={<ReceiptOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -177,7 +165,7 @@ const AppSidebar = () => {
               <Typography
                 variant="h6"
                 color={colors.grey[300]}
-                sx={{ m: "15px 0 5px 20px" }}
+                sx={{ m: "15px 0 5px 20px" }} 
               >
                 Pages
               </Typography>

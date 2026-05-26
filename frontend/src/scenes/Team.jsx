@@ -1,15 +1,32 @@
 import { Box, Typography, useTheme } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../theme";
-import { mockDataTeam } from "../data/mockData";
+import { useEffect, useState } from "react";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import Header from "../components/Header";
 
 const Team = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [teamMembers, setTeamMembers] = useState([]);
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/team")
+      .then((res) => res.json())
+      .then((data) => setTeamMembers(data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleDelete = async (id) => {
+    await fetch(`http://127.0.0.1:8000/team/${id}`, {
+      method: "DELETE",
+    });
+
+    setTeamMembers(teamMembers.filter((member) => member.id !== id));
+  };
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -71,15 +88,32 @@ const Team = () => {
         );
       },
     },
+    {
+      field: "delete",
+      headerName: "Delete",
+      flex: 1,
+
+      renderCell: ({ row }) => {
+        return (
+          <IconButton onClick={() => handleDelete(row.id)}>
+            <DeleteOutlineOutlinedIcon />
+          </IconButton>
+        );
+      },
+    },
   ];
 
   return (
     <>
-      <div className="m-[20px]">
+      <div
+        className="m-[20px] w-full overflow-hidden"
+      >
         <Header title="TEAM" subtitle="Managing the Team Members" />
         <Box
-          className="m-[40px] h-[75vh]"
           sx={{
+            width: "100%",
+            minWidth: 0,
+            height: "75vh",
             "& .MuiDataGrid-root": {
               border: "none",
             },
@@ -102,7 +136,7 @@ const Team = () => {
           }}
         >
           <DataGrid
-            rows={mockDataTeam}
+            rows={teamMembers}
             columns={columns}
             className="custom-data-grid"
           />

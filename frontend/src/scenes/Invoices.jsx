@@ -26,12 +26,8 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="m-[20px] text-[16.7px]">
+    <div className="m-[80px] text-[16.7px]">
       <Header title="ADMIN DASHBOARD" subtitle="Manage ideas and statistics" />
-
-      <div className="flex justify-end ">
-        <Logout />
-      </div>
 
       <Box
         sx={{

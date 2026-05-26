@@ -10,11 +10,14 @@ import Topbar from "./scenes/global/Topbar";
 import Dashboard from "./scenes/Dashboard";
 import AppSidebar from "./scenes/global/AppSidebar";
 import Team from "./scenes/Team";
-import Contact from "./scenes/Contact";
 import Invoices from "./scenes/Invoices";
+import Profile from "./scenes/Profile";
+import { useState } from "react";
+import { mockDataTeam } from "./data/mockData";
 
 function App() {
   const [theme, colorMode] = useMode();
+  const [teamMembers, setTeamMembers] = useState(mockDataTeam);
   return (
     <>
       <colorModeContext.Provider value={colorMode}>
@@ -22,13 +25,32 @@ function App() {
           <CssBaseline />
           <div className="flex h-screen overflow-hidden">
             <AppSidebar />
-            <main className="flex-1 overflow-y-auto">
+            <main
+              className="flex-1 overflow-y-auto w-full"
+              style={{ minWidth: 0 }}
+            >
               <Topbar />
               <Routes>
                 <Route path="/" element={<Dashboard />}></Route>
-                <Route path="/team" element={<Team />}></Route>
-                <Route path="/contacts" element={<Contact />}></Route>
+                <Route
+                  path="/team"
+                  element={
+                    <Team
+                      teamMembers={teamMembers}
+                      setTeamMembers={setTeamMembers}
+                    />
+                  }
+                ></Route>
                 <Route path="/invoices" element={<Invoices />}></Route>
+                <Route
+                  path="/form"
+                  element={
+                    <Profile
+                      teamMembers={teamMembers}
+                      setTeamMembers={setTeamMembers}
+                    />
+                  }
+                ></Route>
               </Routes>
             </main>
           </div>

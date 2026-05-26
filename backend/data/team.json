@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "name": "Jon Snow",
+    "email": "jonsnow@gmail.com",
+    "age": 35,
+    "phone": "(665)121-5454",
+    "access": "admin"
+  },
+  {
+    "id": 2,
+    "name": "Cersei Lannister",
+    "email": "cerseilannister@gmail.com",
+    "age": 42,
+    "phone": "(421)314-2288",
+    "access": "manager"
+  },
+  {
+    "id": 3,
+    "name": "Jaime Lannister",
+    "email": "jaimelannister@gmail.com",
+    "age": 45,
+    "phone": "(422)982-6739",
+    "access": "user"
+  },
+  {
+    "id": 4,
+    "name": "Anya Stark",
+    "email": "anyastark@gmail.com",
+    "age": 16,
+    "phone": "(921)425-6742",
+    "access": "admin"
+  },
+  {
+    "id": 5,
+    "name": "Daenerys Targaryen",
+    "email": "daenerystargaryen@gmail.com",
+    "age": 31,
+    "phone": "(421)445-1189",
+    "access": "user"
+  },
+  {
+    "id": 6,
+    "name": "Rossini Frances",
+    "email": "rossinifrances@gmail.com",
+    "age": 36,
+    "phone": "(222)444-5555",
+    "access": "user"
+  },
+  {
+    "id": 7,
+    "name": "Harvey Roxie",
+    "email": "harveyroxie@gmail.com",
+    "age": 65,
+    "phone": "(444)555-6239",
+    "access": "admin"
+  },
+  {
+    "id": 8,
+    "name": "Rajesh Khanna",
+    "email": "Rajessh_khanna_098@gmail.com",
+    "phone": "8754269713",
+    "age": "52",
+    "access": "user"
+  }
+]
