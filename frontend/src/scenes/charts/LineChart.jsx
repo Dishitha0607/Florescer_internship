@@ -10,7 +10,7 @@ const LineChart = ({ data }) => {
     <>
       <ResponsiveLine
         data={data}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+        margin={{ top: 20, right: 20, bottom: 40, left: 50 }}
         xScale={{ type: "point" }}
         yScale={{ type: "linear", min: 0, max: "auto", stacked: false }}
         curve="catmullRom"

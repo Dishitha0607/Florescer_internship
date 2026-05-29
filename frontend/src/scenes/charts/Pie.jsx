@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import PieChart from "./PieChart";
+import Header from "../../components/Header";
 
 const Pie = () => {
   const [ideas, setIdeas] = useState([]);
@@ -43,15 +44,16 @@ const Pie = () => {
   }));
 
   return (
-    <Box m="20px">
-      <Typography variant="h3" fontWeight="bold" mb="20px">
-        Approved Kaizen Classification Analytics
-      </Typography>
+    <div className="m-[20px]">
+      <Header
+        title="Kaizen Classification Analytics"
+        subtitle="Breakdown of approved kaizens by classification"
+      />
 
       <Box height="75vh">
         <PieChart data={pieData} />
       </Box>
-    </Box>
+    </div>
   );
 };
 

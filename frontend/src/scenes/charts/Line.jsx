@@ -31,7 +31,7 @@ const Line = () => {
           title="IDEAS ACCEPTED"
           subtitle="Line Chart for Keeping track of the Accepted Ideas"
         />
-        <Box height="75vh">
+        <Box height="75vh" width="100%">
           <LineChart data={lineData} />
         </Box>
       </div>
