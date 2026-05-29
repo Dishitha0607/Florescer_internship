@@ -11,14 +11,15 @@ import Invoices from "./scenes/Invoices";
 import Profile from "./scenes/Profile";
 import Calendar from "./scenes/Calendar";
 import FAQ from "./scenes/Faq";
-import Bar from "./scenes/Bar";
-import Pie from "./scenes/Pie";
 
 import Topbar from "./scenes/global/Topbar";
 import AppSidebar from "./scenes/global/AppSidebar";
 
 import { useState } from "react";
 import { mockDataTeam } from "./data/mockData";
+import Bar from "./scenes/charts/Bar";
+import Pie from "./scenes/charts/Pie";
+import Line from "./scenes/charts/Line";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -74,6 +75,7 @@ function App() {
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/bar" element={<Bar />} />
                     <Route path="/pie" element={<Pie />} />
+                    <Route path="/line" element={<Line/>} />
                   </Routes>
                 </main>
               </div>

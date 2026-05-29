@@ -1,6 +1,6 @@
 import { ResponsivePie } from "@nivo/pie";
 import { useTheme } from "@emotion/react";
-import { tokens } from "../theme";
+import { tokens } from "../../theme";
 
 const PieChart = ({ data }) => {
   const theme = useTheme();
@@ -37,25 +37,24 @@ const PieChart = ({ data }) => {
             <strong>{datum.value}</strong>
           </div>
         )}
-
         theme={{
-        legends: {
-          text: {
-            fill: colors.grey[100],
+          legends: {
+            text: {
+              fill: colors.grey[100],
+            },
           },
-        },
-      }}
-      legends={[
-        {
-          anchor: "bottom",
-          direction: "row",
-          translateY: 56,
-          itemWidth: 140,
-          itemHeight: 18,
-          symbolSize: 18,
-          symbolShape: "circle",
-        },
-      ]}
+        }}
+        legends={[
+          {
+            anchor: "bottom",
+            direction: "row",
+            translateY: 56,
+            itemWidth: 140,
+            itemHeight: 18,
+            symbolSize: 18,
+            symbolShape: "circle",
+          },
+        ]}
       />
     </>
   );

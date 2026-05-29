@@ -1,6 +1,6 @@
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
-import { tokens } from "../theme";
+import { tokens } from "../../theme";
 
 const BarChart = ({ data, isDashboard = false }) => {
   const theme = useTheme();
@@ -8,6 +8,8 @@ const BarChart = ({ data, isDashboard = false }) => {
 
   return (
     <ResponsiveBar
+      animate={true}
+      motionConfig="gentle"
       data={data}
       theme={{
         axis: {
@@ -66,7 +68,7 @@ const BarChart = ({ data, isDashboard = false }) => {
         legend: isDashboard ? undefined : "Budget($)",
         legendPosition: "middle",
         legendOffset: -70,
-        format: (value) => `${value / 1000}k`,
+        format: (value) => `${(value / 1000).toFixed(0)}k`,
       }}
       enableLabel={false}
       role="application"
