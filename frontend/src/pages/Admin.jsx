@@ -5,7 +5,7 @@ import IdeasTable from "../components/admin/IdeasTable";
 import IdeaDetailsModal from "../components/admin/IdeaDetailsModal";
 import { useAdminData } from "../hooks/useAdminData";
 
-function Admin1() {
+function Admin() {
   const { ideas, stats, fetchIdeas, fetchStats } = useAdminData();
   const [selectedIdea, setSelectedIdea] = useState(null);
 
@@ -42,4 +42,4 @@ function Admin1() {
   );
 }
 
-export default Admin1;
+export default Admin;

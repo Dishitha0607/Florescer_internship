@@ -134,7 +134,7 @@ const AppSidebar = () => {
             <div className={isCollapsed ? "" : "pl-[10%]"}>
               <Item
                 title="Dashboard"
-                to="/"
+                to="/admin"
                 icon={<HomeOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -149,14 +149,14 @@ const AppSidebar = () => {
               </Typography>
               <Item
                 title="Manage Team"
-                to="/team"
+                to="/admin/team"
                 icon={<PeopleOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item
                 title="Invoices Balances"
-                to="/invoices"
+                to="/admin/invoices"
                 icon={<ReceiptOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -171,21 +171,21 @@ const AppSidebar = () => {
               </Typography>
               <Item
                 title="Profile Form"
-                to="/form"
+                to="/admin/form"
                 icon={<PersonOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item
                 title="Calendar"
-                to="/cal"
-                icon={<CalendarTodayOutlinedIcon/>}
+                to="/admin/cal"
+                icon={<CalendarTodayOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item
                 title="FAQ Page"
-                to="/faq"
+                to="/admin/faq"
                 icon={<HelpOutlineOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
@@ -200,21 +200,21 @@ const AppSidebar = () => {
               </Typography>
               <Item
                 title="Bar Chart"
-                to="/bar"
+                to="/admin/bar"
                 icon={<BarChartOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item
                 title="Pie Chart"
-                to="/pie"
+                to="/admin/pie"
                 icon={<PieChartOutlineOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item
                 title="Line Chart"
-                to="/line"
+                to="/admin/line"
                 icon={<TimelineOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
