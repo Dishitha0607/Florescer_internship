@@ -5,10 +5,10 @@ import { tokens } from "../theme";
 import StatBox from "./charts/StatBox";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
+import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ModelTrainingOutlinedIcon from "@mui/icons-material/ModelTrainingOutlined";
+import PendingActionsOutlinedIcon from '@mui/icons-material/PendingActionsOutlined';
 
 import Header from "../components/Header";
 import LineChart from "./charts/LineChart";
@@ -130,7 +130,7 @@ const Dashboard = () => {
               title={stats.total}
               subtitle="Total Ideas"
               icon={
-                <EmailIcon
+                <ModelTrainingOutlinedIcon
                   sx={{
                     color: colors.greenAccent[500],
                     fontSize: "26px",
@@ -153,9 +153,9 @@ const Dashboard = () => {
               title={stats.pending}
               subtitle="Pending Ideas"
               icon={
-                <TrafficIcon
+                <PendingActionsOutlinedIcon
                   sx={{
-                    color: colors.greenAccent[500],
+                    color: colors.blueAccent[500],
                     fontSize: "26px",
                   }}
                 />
@@ -176,7 +176,7 @@ const Dashboard = () => {
               title={stats.accepted}
               subtitle="Accepted Ideas"
               icon={
-                <PointOfSaleIcon
+                <ThumbUpAltOutlinedIcon
                   sx={{
                     color: colors.greenAccent[500],
                     fontSize: "26px",
@@ -199,7 +199,7 @@ const Dashboard = () => {
               title={stats.rejected}
               subtitle="Rejected Ideas"
               icon={
-                <PersonAddIcon
+                <ThumbDownOffAltOutlinedIcon
                   sx={{
                     color: colors.blueAccent[500],
                     fontSize: "26px",

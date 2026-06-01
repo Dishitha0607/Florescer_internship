@@ -1,4 +1,12 @@
-import { Box, TextField, Button } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -12,6 +20,7 @@ const initialValues = {
   age: "",
   address1: "",
   address2: "",
+  access: "user",
 };
 
 const phoneRegExp =
@@ -28,6 +37,7 @@ const userSchema = yup.object().shape({
   age: yup.string().required("required"),
   address1: yup.string().required("required"),
   address2: yup.string().required("required"),
+  access: yup.string().required("required"),
 });
 
 const Profile = ({ teamMembers, setTeamMembers }) => {
@@ -39,7 +49,7 @@ const Profile = ({ teamMembers, setTeamMembers }) => {
       email: values.email,
       phone: values.contact,
       age: values.age,
-      access: "user",
+      access: values.access,
     };
 
     try {
@@ -144,6 +154,24 @@ const Profile = ({ teamMembers, setTeamMembers }) => {
                   helperText={touched.age && errors.age}
                   sx={{ gridColumn: "span 4" }}
                 />
+
+                <FormControl
+                  fullWidth
+                  variant="filled"
+                  sx={{ gridColumn: "span 4" }}
+                >
+                  <InputLabel>Role</InputLabel>
+                  <Select
+                    name="access"
+                    value={values.access}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={!!touched.age && !!errors.age}
+                  >
+                    <MenuItem value="user">User</MenuItem>
+                    <MenuItem value="admin">Admin</MenuItem>
+                  </Select>
+                </FormControl>
 
                 <TextField
                   fullWidth

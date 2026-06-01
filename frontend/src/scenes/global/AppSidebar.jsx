@@ -110,33 +110,7 @@ const AppSidebar = () => {
             </MenuItem>
 
             {/* USER */}
-            {!isCollapsed && (
-              <div className="mb-[25px]">
-                <div className="flex justify-center text-center">
-                  <img
-                    src={userImage}
-                    alt="Profile user"
-                    className="w-[100px] h-[100px] cursor-pointer rounded-full"
-                  />
-                </div>
-
-                <div className="text-center">
-                  <Typography
-                    variant="h2"
-                    className="font-bold m-[10px]"
-                    style={{ color: colors.grey[100] }}
-                  >
-                    Ed Roh
-                  </Typography>
-                  <Typography
-                    variant="h5"
-                    style={{ color: colors.greenAccent[500] }}
-                  >
-                    Vp Admin
-                  </Typography>
-                </div>
-              </div>
-            )}
+            
 
             {/* Menu Items */}
             <div className={isCollapsed ? "" : "pl-[10%]"}>
@@ -188,13 +162,6 @@ const AppSidebar = () => {
                 title="Calendar"
                 to="/admin/cal"
                 icon={<CalendarTodayOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="FAQ Page"
-                to="/admin/faq"
-                icon={<HelpOutlineOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
