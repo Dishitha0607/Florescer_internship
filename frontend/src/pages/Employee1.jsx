@@ -79,7 +79,7 @@ function Employee1() {
   // FETCH STATS
   const fetchStats = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/dashboardStats");
+      const res = await fetch("http://127.0.0.1:8000/employeeStats?email=emp@test.com");
 
       const data = await res.json();
       setStats(data);

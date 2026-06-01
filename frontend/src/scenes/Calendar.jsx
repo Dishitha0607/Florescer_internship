@@ -15,11 +15,15 @@ import {
 } from "@mui/material";
 import Header from "../components/Header";
 import { tokens } from "../theme";
+import calendarEvents from "../data/calendarEvents.json";
 
 const Calendar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [currentEvents, setCurrentEvents] = useState([]);
+  const [currentEvents, setCurrentEvents] = useState(() => {
+    const saved = localStorage.getItem("calendarEvents");
+    return saved ? JSON.parse(saved) : calendarEvents;
+  });
 
   const handleDateClick = (selected) => {
     const title = prompt("Please enter a new title for your event");
@@ -27,13 +31,19 @@ const Calendar = () => {
     calendarApi.unselect();
 
     if (title) {
-      calendarApi.addEvent({
+      const newEvent = {
         id: `${selected.dateStr}-${title}`,
         title,
         start: selected.startStr,
         end: selected.endStr,
         allDay: selected.allDay,
-      });
+      };
+
+      const updatedEvents = [...currentEvents, newEvent];
+
+      setCurrentEvents(updatedEvents);
+
+      localStorage.setItem("calendarEvents", JSON.stringify(updatedEvents));
     }
   };
 
@@ -43,10 +53,16 @@ const Calendar = () => {
         `Are you sure you want to delete the event '${selected.event.title}'`,
       )
     ) {
-      selected.event.remove();
+      const updatedEvents = currentEvents.filter(
+        (event) => event.id !== selected.event.id,
+      );
+
+      setCurrentEvents(updatedEvents);
+
+      localStorage.setItem("calendarEvents", JSON.stringify(updatedEvents));
     }
   };
-
+  
   return (
     <Box m="20px">
       <Header title="Calendar" subtitle="Full Calendar Interactive Page" />
@@ -109,19 +125,8 @@ const Calendar = () => {
             dayMaxEvents={true}
             select={handleDateClick}
             eventClick={handleEventClick}
-            eventsSet={(events) => setCurrentEvents(events)}
-            initialEvents={[
-              {
-                id: "12315",
-                title: "All-day event",
-                date: "2022-09-14",
-              },
-              {
-                id: "5123",
-                title: "Timed event",
-                date: "2022-09-28",
-              },
-            ]}
+            // eventsSet={(events) => setCurrentEvents(events)}
+            events={currentEvents}
           />
         </Box>
       </Box>

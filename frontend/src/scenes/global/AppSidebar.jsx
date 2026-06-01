@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 // import "react-pro-sidebar/dist/css/styles.css";
 import { Box, colors, IconButton, Typography, useTheme } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { tokens } from "../../theme";
 import userImage from "../../assets/user.png";
 
@@ -17,10 +17,12 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   return (
     <MenuItem
       active={selected === title}
@@ -39,6 +41,12 @@ const AppSidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
   return (
     <>
@@ -124,7 +132,7 @@ const AppSidebar = () => {
                     variant="h5"
                     style={{ color: colors.greenAccent[500] }}
                   >
-                    VP Fancy Admin
+                    Vp Admin
                   </Typography>
                 </div>
               </div>
@@ -219,6 +227,14 @@ const AppSidebar = () => {
                 selected={selected}
                 setSelected={setSelected}
               />
+
+              <MenuItem
+                icon={<LogoutOutlinedIcon />}
+                onClick={handleLogout}
+                style={{ color: "#ff6b6b" }}
+              >
+                <Typography>Logout</Typography>
+              </MenuItem>
             </div>
           </Menu>
         </Sidebar>

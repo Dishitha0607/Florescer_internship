@@ -5,10 +5,15 @@ from services.idea_services import (
     create_idea_service,
     get_employee_ideas_service,
     update_idea_service,
-    forward_idea_service
+    forward_idea_service,
+    employee_stats_service
 )
 
 router = APIRouter()
+
+@router.get("/employeeStats")
+def employee_stats(email: str = Query(...)):
+    return employee_stats_service(email)
 
 @router.post("/addIdea")
 def add_idea(idea: Idea):

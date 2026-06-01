@@ -4,7 +4,7 @@ export const fetchIdeasApi = () =>
   fetch(`${BASE}/ideas?email=emp@test.com`);
 
 export const fetchStatsApi = () =>
-  fetch(`${BASE}/dashboardStats`);
+  fetch(`${BASE}/employeeStats?email=emp@test.com`);
 
 export const fetchEmployeeStarsApi = () =>
   fetch(`${BASE}/employeeStars`);

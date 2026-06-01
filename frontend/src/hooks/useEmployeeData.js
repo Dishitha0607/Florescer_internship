@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { fetchIdeasApi, fetchStatsApi, fetchEmployeeStarsApi } from "../api/employeeApi";
+import {
+  fetchIdeasApi,
+  fetchStatsApi,
+  fetchEmployeeStarsApi
+} from "../api/employeeApi";
 
 export function useEmployeeData() {
   const [ideas, setIdeas] = useState([]);
@@ -10,6 +14,7 @@ export function useEmployeeData() {
     try {
       const res = await fetchIdeasApi();
       const data = await res.json();
+
       setIdeas(Array.isArray(data) ? data : []);
       return Array.isArray(data) ? data : [];
     } catch (error) {

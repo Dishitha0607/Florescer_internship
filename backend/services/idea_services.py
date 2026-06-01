@@ -2,6 +2,32 @@ from database.db import get_db_connection
 import random
 
 # =========================
+# EMPLOYEE STATS
+# =========================
+def employee_stats_service(email):
+
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+
+    query = """
+    SELECT
+        COUNT(*) AS total,
+        SUM(status = 'Pending') AS pending,
+        SUM(status = 'Accepted') AS accepted,
+        SUM(status = 'Forwarded') AS forwarded
+    FROM ideas1
+    WHERE emp_email = %s
+    """
+
+    cursor.execute(query, (email,))
+    result = cursor.fetchone()
+
+    cursor.close()
+    db.close()
+
+    return result
+
+# =========================
 # CREATE IDEA
 # =========================
 def create_idea_service(idea):
