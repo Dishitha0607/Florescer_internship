@@ -10,6 +10,30 @@ const LineChart = ({ data }) => {
     <>
       <ResponsiveLine
         data={data}
+        legends={[
+          {
+            anchor: "bottom-right",
+            direction: "column",
+            justify: false,
+            translateX: -70,
+            translateY: 0,
+            itemsSpacing: 0,
+            itemDirection: "left-to-right",
+            itemWidth: 80,
+            itemHeight: 20,
+            itemOpacity: 0.75,
+            symbolSize: 12,
+            symbolShape: "circle",
+            effects: [
+              {
+                on: "hover",
+                style: {
+                  itemOpacity: 1,
+                },
+              },
+            ],
+          },
+        ]}
         margin={{ top: 20, right: 20, bottom: 40, left: 50 }}
         xScale={{ type: "point" }}
         yScale={{ type: "linear", min: 0, max: "auto", stacked: false }}
@@ -55,6 +79,7 @@ const LineChart = ({ data }) => {
           },
           legends: {
             text: {
+              fontSize:15,
               fill: colors.grey[100],
             },
           },
@@ -70,17 +95,6 @@ const LineChart = ({ data }) => {
             },
           },
         }}
-        legends={[
-          {
-            anchor: "bottom-right",
-            direction: "column",
-            translateX: 100,
-            itemWidth: 80,
-            itemHeight: 20,
-            symbolSize: 12,
-            symbolShape: "circle",
-          },
-        ]}
       />
     </>
   );

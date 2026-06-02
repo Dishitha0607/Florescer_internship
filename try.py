@@ -1,14 +1,13 @@
-s = "TO BE OR NOT TO BE"
-words = s.split()
-max_len = max(len(word) for word in words)
-result=[]
+s = "dfa12321afd"
+num = []
 
-for i in range(max_len):
-  row = ""
-  for word in words:
-    if i< len(word):
-      row += word[i]
-    else:
-      row += " "
-  result.append(row.rstrip())
-print(result)
+for char in  s:
+  if char.isdigit():
+    num.append(int(char))
+
+res = sorted(set(num))
+
+if len(res) < 2:
+  return -1
+
+return res[-2]
