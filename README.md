@@ -34,6 +34,13 @@ Employees can view their accumulated star ratings based on idea evaluations prov
 
 ## 🛠️ Admin Dashboard
 
+* Main Dashboard
+* Profile Form - creating newly joined/promoted users
+* Page to view the team members
+* Calendar to schedule meeting/programs
+* Bar Chart - Monthly Budget Analytics
+* Pie Chart - Approved Kaizen classifications
+* Line Chart - Total accepted ideas
 * Review forwarded employee ideas
 * Accept or reject ideas
 * Provide ratings and feedback
@@ -42,6 +49,9 @@ Employees can view their accumulated star ratings based on idea evaluations prov
 
 ### Dashboard Summary
 
+* **Ideas vs Accepted Kaizens Line Chart**
+* **Kaizen Classifications Pie Chart**
+* **Monthly Budget Analytics Bar Chart**
 * **Total Ideas**
 * **Pending**
 * **Accepted**
@@ -56,6 +66,8 @@ Employees can view their accumulated star ratings based on idea evaluations prov
 * React.js
 * Tailwind CSS
 * JavaScript
+* MUI
+* Nivo charts
 
 ## Backend
 
@@ -102,10 +114,8 @@ KAIZEN/
 │       ├── components/
 │       │   ├── admin/
 │       │   ├── employee/
-│       │   ├── Button.jsx
-│       │   ├── Logout.jsx
-│       │   ├── Navbar.jsx
-│       │   ├── ProtectedRoute.jsx
+│       │   ├── common/
+│       │   ├──Header.jsx
 │       │   └── ThemeToggle.jsx
 │       │
 │       ├── pages/
@@ -113,6 +123,27 @@ KAIZEN/
 |       |   ├──Login.jsx
 │       |   └── Employee.jsx
 │       │
+|       ├── data/
+│       |   ├── barData.js
+|       |   ├── CalendarEvents.json
+|       |   ├── mockData.js
+│       |   └── chartData.js
+|       |
+|       ├── hooks/
+│       |   ├── useAdminData.js
+│       |   └── useEmployeeData.js
+|       |
+|       ├── components/
+│       │   ├── charts/
+│       │   ├── global/
+│       │   ├── Calendar.jsx
+│       │   ├── Dashboard.jsx
+|       |   ├── Invoices.jsx
+|       |   ├── Profile.jsx
+|       |   ├── Team.jsx
+│       │   └── ThemeToggle.jsx
+|       |
+|       |
 │       ├──App.css
 |       ├──App.jsx
 |       ├──index.css
@@ -166,9 +197,8 @@ Password: 5678
 
 # 🚀 Future Improvements
 
-* JWT Authentication
+* Authentication
 * Email Notifications
-* Analytics Dashboard
 * Enhanced File Management
 
 ---
